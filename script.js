@@ -93,6 +93,9 @@ const flowControl1D = (() => {
 // Add and update elements in the DOM
 const dom = () => {
     
+    const addBoard = () => {
+        
+    }
 }
 
 

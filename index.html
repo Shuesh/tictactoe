@@ -16,9 +16,9 @@
     <title>Tic-Tac-Toe</title>
 </head>
 <body>
-    <div class="container" id="main-container">
-        <div class="row">
-            <form class="col-sm-3" id="sidebar">
+    <div class="container min-vh-100 min-vw-100" id="main-container">
+        <div class="row" id="grid">
+            <form class="col-md-3" id="sidebar">
                 <label for="radio-buttons">Play as:</label>
                 <div id="radio-buttons" name="radio-buttons">
                     <div class="form-check">
@@ -45,23 +45,18 @@
                     <option value="tic-tac-toe" class="difficulty-selection" id="tic-tac-toe">Tic-Tac-Toe</option>
                     <option value="ultimate-tic-tac-toe" class="difficulty-selection" id="ultimate-tic-tac-toe">Ultimate Tic-Tac-Toe</option>
                 </select>
+                <br>
             </form>
-            <div class="col-lg-9 container" id="game-area">
-                <div class="row">
-                    <div class="col">1</div>
-                    <div class="col">2</div>
-                    <div class="col">3</div>
-                </div>
-                <div class="row">
-                    <div class="col">4</div>
-                    <div class="col">5</div>
-                    <div class="col">6</div>
-                </div>
-                <div class="row">
-                    <div class="col">7</div>
-                    <div class="col">8</div>
-                    <div class="col">9</div>
-                </div>
+            <div class="col-md-9" id="game-area">
+                    <div class="ttt-cell">1</div>
+                    <div class="ttt-cell">2</div>
+                    <div class="ttt-cell">3</div>
+                    <div class="ttt-cell">4</div>
+                    <div class="ttt-cell">5</div>
+                    <div class="ttt-cell">6</div>
+                    <div class="ttt-cell">7</div>
+                    <div class="ttt-cell">8</div>
+                    <div class="ttt-cell">9</div>
             </div>
         </div>
     </div>

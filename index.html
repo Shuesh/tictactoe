@@ -16,7 +16,7 @@
     <title>Tic-Tac-Toe</title>
 </head>
 <body>
-    <div class="container min-vh-100 min-vw-100" id="main-container">
+    <div class="container" id="main-container">
         <div class="row" id="grid">
             <form class="col-md-3" id="sidebar">
                 <label for="radio-buttons">Play as:</label>
@@ -48,15 +48,17 @@
                 <br>
             </form>
             <div class="col-md-9" id="game-area">
-                    <div class="ttt-cell">1</div>
-                    <div class="ttt-cell">2</div>
-                    <div class="ttt-cell">3</div>
-                    <div class="ttt-cell">4</div>
-                    <div class="ttt-cell">5</div>
-                    <div class="ttt-cell">6</div>
-                    <div class="ttt-cell">7</div>
-                    <div class="ttt-cell">8</div>
-                    <div class="ttt-cell">9</div>
+                    <!-- <div id="grid-wrapper"> -->
+                        <div class="ttt-cell right-border bottom-border">0</div>
+                        <div class="ttt-cell right-border bottom-border">1</div>
+                        <div class="ttt-cell bottom-border">2</div>
+                        <div class="ttt-cell right-border bottom-border">3</div>
+                        <div class="ttt-cell right-border bottom-border">4</div>
+                        <div class="ttt-cell bottom-border">5</div>
+                        <div class="ttt-cell right-border">6</div>
+                        <div class="ttt-cell right-border">7</div>
+                        <div class="ttt-cell">8</div>
+                    <!-- </div> -->
             </div>
         </div>
     </div>

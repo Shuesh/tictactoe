@@ -3,8 +3,17 @@ const tttGrid = (filling) => {
     // Instantiate with whatever the filling is 
     let boardState = [filling,filling,filling,filling,filling,filling,filling,filling,filling];
 
+    const gameType = () => {
+        return document.getElementById('difficulty').value;
+    }
+
     const getState = () => {
         return boardState;
+    }
+
+    // Populate the board with a given state
+    const populateBoard = (state) => {
+        boardState = state;
     }
 
     // Reset the board to the initial settings (including 2nd level boards, if applicable)
@@ -22,6 +31,7 @@ const tttGrid = (filling) => {
         // May run into issues here in 2D games. Will troubleshoot later if it's a problem
         if (boardState[position] == filling) {
             boardState[position] = marker;
+            dom.updateBoard(document.getElementById('game-area'));
         }
     }
 
@@ -55,7 +65,7 @@ const tttGrid = (filling) => {
         }
     }
 
-    return {getState, resetBoard, clearBoard, makeMove, checkWin};
+    return {gameType, getState, populateBoard, resetBoard, clearBoard, makeMove, checkWin};
 }
 
 // Initialize a 1D grid
@@ -76,7 +86,12 @@ const flowControl1D = (() => {
     }
 
     // Make a move
-    const makeMove = (position) => {
+    const makeMove = (gridCell) => {
+        let position = gridCell.parentNode.children.findIndex(
+            function(child){
+                return child === this;
+            }
+        );
         gameBoard.makeMove(activePlayer, position);
         gameBoard.checkWin();
         toggleActivePlayer();
@@ -90,13 +105,58 @@ const flowControl1D = (() => {
     return {makeMove, getActivePlayer};
 })();
 
+
+
 // Add and update elements in the DOM
-const dom = () => {
+const dom = (() => {
     
-    const addBoard = () => {
-        
+    const addNewBoard = (parent) => {
+        let newGrid = document.createElement('div');
+        newGrid.classList.add('grid-wrapper');
+        let newGridCells = [];
+        for (let i = 0; i < 9; i++){
+            newGridCells[i] = document.createElement('div');
+            if (i === 0 || i === 1 || i === 3 || i === 4 || i === 6 || i === 7){
+                newGridCells[i].classList.add('right-border');
+            }
+            if (i === 0 || i === 1 || i === 2 || i === 3 || i === 4 || i === 5){
+                newGridCells[i].classList.add('bottom-border');
+            }
+            newGridCells[i].classList.add('ttt-cell');
+            addClickListener(newGridCells[i]);
+            newGrid.appendChild(newGridCells[i]);
+        }
+        parent.appendChild(newGrid);
     }
-}
+
+    const updateBoard = (parent) => {
+        const currentState = gameBoard.getState();
+        let gridWrapper = parent.children[0];
+        let gridCells = gridWrapper.children;
+
+        for(let i = 0; i < currentState.length; i++) {
+            if (typeof(currentState[i]) === 'string'){
+                gridCells[i].textContent = currentState[i];
+                removeClickListener(gridCells[i]);
+            } else if (typeof(currentState[i]) === 'object'){
+                updateBoard(gridCells[i]);
+            } else {
+                console.log('Board state type error.');
+            }
+        };
+    }
+
+    const addClickListener = (gridCell) => {
+        gridCell.addEventListener("click", flowControl1D.makeMove(this));
+    }
+
+    const removeClickListener = (gridCell) => {
+        gridCell.removeEventListener("click", flowControl1D.makeMove(this));
+    }
+
+    return {addNewBoard, updateBoard};
+})();
 
 
-window.onload = dom.update();
+// Initialize the grid to a 1D game
+window.onload = dom.addNewBoard(document.getElementById('game-area'));

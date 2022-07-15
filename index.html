@@ -42,23 +42,24 @@
                 <br>
                 <label for="game-select" class="select-label">Game type:</label>
                 <select class="form-select row" id="difficulty" name="game-select">
-                    <option value="tic-tac-toe" class="difficulty-selection" id="tic-tac-toe">Tic-Tac-Toe</option>
-                    <option value="ultimate-tic-tac-toe" class="difficulty-selection" id="ultimate-tic-tac-toe">Ultimate Tic-Tac-Toe</option>
+                    <!-- The value here corresponds to the number of dimensions -->
+                    <option value="1" class="difficulty-selection" id="tic-tac-toe">Tic-Tac-Toe</option>
+                    <option value="2" class="difficulty-selection" id="ultimate-tic-tac-toe">Ultimate Tic-Tac-Toe</option>
                 </select>
                 <br>
             </form>
             <div class="col-md-9" id="game-area">
-                    <!-- <div id="grid-wrapper"> -->
-                        <div class="ttt-cell right-border bottom-border">0</div>
-                        <div class="ttt-cell right-border bottom-border">1</div>
-                        <div class="ttt-cell bottom-border">2</div>
-                        <div class="ttt-cell right-border bottom-border">3</div>
-                        <div class="ttt-cell right-border bottom-border">4</div>
-                        <div class="ttt-cell bottom-border">5</div>
-                        <div class="ttt-cell right-border">6</div>
-                        <div class="ttt-cell right-border">7</div>
-                        <div class="ttt-cell">8</div>
-                    <!-- </div> -->
+                    <!-- <div class="grid-wrapper">
+                        <div class="ttt-cell right-border bottom-border"></div>
+                        <div class="ttt-cell right-border bottom-border"></div>
+                        <div class="ttt-cell bottom-border"></div>
+                        <div class="ttt-cell right-border bottom-border"></div>
+                        <div class="ttt-cell right-border bottom-border"></div>
+                        <div class="ttt-cell bottom-border"></div>
+                        <div class="ttt-cell right-border"></div>
+                        <div class="ttt-cell right-border"></div>
+                        <div class="ttt-cell"></div>
+                    </div> -->
             </div>
         </div>
     </div>

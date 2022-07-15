@@ -6,7 +6,7 @@
     height: 100%;
 }
 
-#game-area {
+.grid-wrapper {
     box-sizing: border-box;
     display: grid;
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);

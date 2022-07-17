@@ -1,6 +1,6 @@
 // Tic-Tac-Toe Grid factory function
 const tttGrid = (filling) => {
-    // Instantiate with whatever the filling is 
+    // Instantiate with whatever the filling is
     let boardState = [filling,filling,filling,filling,filling,filling,filling,filling,filling];
 
     const gameType = () => {
@@ -27,7 +27,7 @@ const tttGrid = (filling) => {
     }
 
     // This adds either marker to any valid position
-    const makeMove = (marker, position) => {
+    function makeMove(marker, position){
         // May run into issues here in 2D games. Will troubleshoot later if it's a problem
         if (boardState[position] == filling) {
             boardState[position] = marker;
@@ -38,25 +38,25 @@ const tttGrid = (filling) => {
     // 8 possible ways to win. Just hard-code possibilities to check them all
     const checkWin = () => {
         // Check the three columns
-        if (boardState[0] === boardState[3] && boardState[3] === boardState[6]){
+        if (boardState[0] === boardState[3] && boardState[3] === boardState[6] && boardState[0] !== ''){
             return boardState[0];
-        } else if (boardState[1] === boardState[4] && boardState[4] === boardState[7]) {
+        } else if (boardState[1] === boardState[4] && boardState[4] === boardState[7] && boardState[1] !== '') {
             return boardState[1];
-        } else if (boardState[2] === boardState[5] && boardState[5] === boardState[8]){
+        } else if (boardState[2] === boardState[5] && boardState[5] === boardState[8] && boardState[2] !== ''){
             return boardState[2];
         } 
         // Check the three rows
-        else if (boardState[0] === boardState[1] && boardState[1] === boardState[2]){
+        else if (boardState[0] === boardState[1] && boardState[1] === boardState[2] && boardState[0] !== ''){
             return boardState[0];
-        } else if (boardState[3] === boardState[4] && boardState[4] === boardState[5]){
+        } else if (boardState[3] === boardState[4] && boardState[4] === boardState[5] && boardState[3] !== ''){
             return boardState[3];
-        } else if (boardState[6] === boardState[7] && boardState[7] === boardState[8]){
+        } else if (boardState[6] === boardState[7] && boardState[7] === boardState[8] && boardState[6] !== ''){
             return boardState[6];
         } 
         // Check the two diagonals
-        else if (boardState[0] === boardState[4] && boardState[4] === boardState[8]){
+        else if (boardState[0] === boardState[4] && boardState[4] === boardState[8] && boardState[0] !== ''){
             return boardState[0];
-        } else if (boardState[2] === boardState[4] && boardState[4] === boardState[6]){
+        } else if (boardState[2] === boardState[4] && boardState[4] === boardState[6] && boardState[2] !== ''){
             return boardState[2];
         } 
         // If no wins, return false
@@ -67,6 +67,8 @@ const tttGrid = (filling) => {
 
     return {gameType, getState, populateBoard, resetBoard, clearBoard, makeMove, checkWin};
 }
+
+
 
 // Initialize a 1D grid
 const gameBoard = tttGrid('');
@@ -86,15 +88,24 @@ const flowControl1D = (() => {
     }
 
     // Make a move
-    const makeMove = (gridCell) => {
-        let position = gridCell.parentNode.children.findIndex(
-            function(child){
-                return child === this;
-            }
-        );
+    function makeMove() {
+        let children = this.parentElement.children;
+        let position = [...children].indexOf(this);
         gameBoard.makeMove(activePlayer, position);
-        gameBoard.checkWin();
-        toggleActivePlayer();
+        winner = gameBoard.checkWin();
+        if (winner){
+            [...children].forEach(childElement => {
+                dom.removeClickListener(childElement);
+            });
+
+            winnerComment = document.createElement('h1');
+            winnerComment.textContent = `${winner} wins!`;
+            winnerComment.classList.add('winner-comment');
+            this.parentElement.parentElement.appendChild(winnerComment);
+        } else {
+            toggleActivePlayer();
+            dom.removeClickListener(this);
+        }
     }
 
     // Getter for the active player
@@ -102,13 +113,27 @@ const flowControl1D = (() => {
         return activePlayer;
     }
 
-    return {makeMove, getActivePlayer};
+    const resetBoard = () => {
+        gameBoard.resetBoard();
+        gameArea = document.getElementById('game-area');
+        children = gameArea.children[0].children;
+        dom.updateBoard(gameArea);
+        [...children].forEach(gridCell => {
+            dom.addClickListener(gridCell);
+        });
+        activePlayer = 'X';
+    }
+
+    return {makeMove, getActivePlayer, resetBoard};
 })();
 
 
 
 // Add and update elements in the DOM
 const dom = (() => {
+
+    document.getElementById('reset-button').addEventListener("click", flowControl1D.resetBoard);
+    document.getElementById('start-button').addEventListener("click", flowControl1D.getActivePlayer);
     
     const addNewBoard = (parent) => {
         let newGrid = document.createElement('div');
@@ -123,8 +148,8 @@ const dom = (() => {
                 newGridCells[i].classList.add('bottom-border');
             }
             newGridCells[i].classList.add('ttt-cell');
-            addClickListener(newGridCells[i]);
             newGrid.appendChild(newGridCells[i]);
+            addClickListener(newGridCells[i]);
         }
         parent.appendChild(newGrid);
     }
@@ -137,7 +162,6 @@ const dom = (() => {
         for(let i = 0; i < currentState.length; i++) {
             if (typeof(currentState[i]) === 'string'){
                 gridCells[i].textContent = currentState[i];
-                removeClickListener(gridCells[i]);
             } else if (typeof(currentState[i]) === 'object'){
                 updateBoard(gridCells[i]);
             } else {
@@ -147,16 +171,22 @@ const dom = (() => {
     }
 
     const addClickListener = (gridCell) => {
-        gridCell.addEventListener("click", flowControl1D.makeMove(this));
+        // Need to figure out how to pass the specific instance to makeMove
+        gridCell.addEventListener("click", flowControl1D.makeMove);
     }
 
     const removeClickListener = (gridCell) => {
-        gridCell.removeEventListener("click", flowControl1D.makeMove(this));
+        gridCell.removeEventListener("click", flowControl1D.makeMove);
     }
 
-    return {addNewBoard, updateBoard};
+    return {addNewBoard, updateBoard, addClickListener, removeClickListener};
 })();
 
 
 // Initialize the grid to a 1D game
 window.onload = dom.addNewBoard(document.getElementById('game-area'));
+
+
+// Make computer brains based on difficulty
+
+// Easy -- choose randomly

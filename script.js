@@ -3,8 +3,12 @@ const tttGrid = (filling) => {
     // Instantiate with whatever the filling is
     let boardState = [filling,filling,filling,filling,filling,filling,filling,filling,filling];
 
-    const gameType = () => {
+    const getDifficulty = () => {
         return document.getElementById('difficulty').value;
+    }
+
+    const gameType = () => {
+        return document.getElementById('dimensions').value;
     }
 
     const getState = () => {
@@ -65,7 +69,7 @@ const tttGrid = (filling) => {
         }
     }
 
-    return {gameType, getState, populateBoard, resetBoard, clearBoard, makeMove, checkWin};
+    return {gameType, getDifficulty, getState, populateBoard, resetBoard, clearBoard, makeMove, checkWin};
 }
 
 
@@ -77,6 +81,15 @@ const gameBoard = tttGrid('');
 const flowControl1D = (() => {
     // Track whose turn it is
     let activePlayer = 'X';
+    let playerMarker = '';
+
+    temp = document.getElementById('flexRadioDefault1').checked;
+    
+    if(document.getElementById('flexRadioDefault1').checked){
+        playerMarker = 'X';
+    } else {
+        playerMarker = 'O';
+    }
 
     // toggle whose turn it is
     const toggleActivePlayer = () => {
@@ -85,7 +98,12 @@ const flowControl1D = (() => {
         } else {
             activePlayer = 'X';
         }
+
+        if (activePlayer !== playerMarker){
+            AI.difficulty1(gameBoard);
+        }
     }
+
 
     // Make a move
     function makeMove() {
@@ -189,4 +207,27 @@ window.onload = dom.addNewBoard(document.getElementById('game-area'));
 
 // Make computer brains based on difficulty
 
-// Easy -- choose randomly
+// Impossible -- play perfectly
+const AI = (() => {
+    // Get all legal moves for the computer
+    const legalIndicies = (parent) => {
+        boardState = parent.getState();
+        indicies = [];
+        for (let i = 0; i < boardState.length; i++){
+            if (boardState[i] === ''){
+                indicies.push(i);
+            }
+        }
+        return indicies;
+    }
+    
+    // Easy -- choose randomly
+    const difficulty1 = (parent) => {
+        indicies = legalIndicies(parent);
+        index = Math.floor(Math.random() * (indicies.length + 1));
+        children = [...document.getElementById('game-area').children[0].children];
+        flowControl1D.makeMove.call(children[indicies[index]]);
+    }
+
+    return {difficulty1};
+})();

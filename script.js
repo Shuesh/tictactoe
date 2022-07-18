@@ -62,7 +62,12 @@ const tttGrid = (filling) => {
             return boardState[0];
         } else if (boardState[2] === boardState[4] && boardState[4] === boardState[6] && boardState[2] !== ''){
             return boardState[2];
-        } 
+        }
+
+        // If there are no legal moves and nobody has won
+        else if (AI.legalIndicies(gameBoard).length === 0){
+            return 'tie';
+        }
         // If no wins, return false
         else {
             return false;
@@ -80,16 +85,10 @@ const gameBoard = tttGrid('');
 // Initialize a flow controller for the game
 const flowControl1D = (() => {
     // Track whose turn it is
+    let previousGame = 'X';
     let activePlayer = 'X';
-    let playerMarker = '';
+    let playerMarker = 'X';
 
-    temp = document.getElementById('flexRadioDefault1').checked;
-    
-    if(document.getElementById('flexRadioDefault1').checked){
-        playerMarker = 'X';
-    } else {
-        playerMarker = 'O';
-    }
 
     // toggle whose turn it is
     const toggleActivePlayer = () => {
@@ -117,7 +116,11 @@ const flowControl1D = (() => {
             });
 
             winnerComment = document.createElement('h1');
-            winnerComment.textContent = `${winner} wins!`;
+            if (winner !== 'tie'){
+                winnerComment.textContent = `${winner} wins!`;
+            } else {
+                winnerComment.textContent = "It's a tie!";
+            }
             winnerComment.classList.add('winner-comment');
             this.parentElement.parentElement.appendChild(winnerComment);
         } else {
@@ -139,7 +142,19 @@ const flowControl1D = (() => {
         [...children].forEach(gridCell => {
             dom.addClickListener(gridCell);
         });
-        activePlayer = 'X';
+        gameArea.removeChild(document.querySelector("#game-area > h1"));
+
+        if (previousGame === 'X'){
+            activePlayer = 'O';
+            previousGame = 'O';
+        } else {
+            activePlayer = 'X';
+            previousGame = 'X';
+        }
+
+        if (activePlayer !== playerMarker){
+            AI.difficulty1(gameBoard);
+        }
     }
 
     return {makeMove, getActivePlayer, resetBoard};
@@ -151,7 +166,6 @@ const flowControl1D = (() => {
 const dom = (() => {
 
     document.getElementById('reset-button').addEventListener("click", flowControl1D.resetBoard);
-    document.getElementById('start-button').addEventListener("click", flowControl1D.getActivePlayer);
     
     const addNewBoard = (parent) => {
         let newGrid = document.createElement('div');
@@ -224,10 +238,10 @@ const AI = (() => {
     // Easy -- choose randomly
     const difficulty1 = (parent) => {
         indicies = legalIndicies(parent);
-        index = Math.floor(Math.random() * (indicies.length + 1));
+        index = Math.floor(Math.random() * (indicies.length));
         children = [...document.getElementById('game-area').children[0].children];
         flowControl1D.makeMove.call(children[indicies[index]]);
     }
 
-    return {difficulty1};
+    return {legalIndicies, difficulty1};
 })();
